@@ -1,11 +1,16 @@
 def get_aggregat( start , limit) -> list:
         aggregat = [
-            { "$sort": { "timestamp": 1 } },
+            
+            { "$sort": { "CreateDate": 1 } },
             { "$skip": start},
-            { "$limit": limit }
+            { "$limit": limit },
+            { "$project" : { "_id" : 0 } }
+
         ]
 
         return aggregat
+
+
 
 # --------------------------------------------------------------------------------------
 def filter_by_info(data:list[dict] ,field:str , param ) -> list:
