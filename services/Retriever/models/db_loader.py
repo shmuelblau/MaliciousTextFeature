@@ -24,11 +24,9 @@ class DbLoader:
         try:
             data = list(self.collection.aggregate(aggregat))
             log.info(f"select a data len ={len(data)}")
-            for doc in data:
-                if "_id" in doc:
-                    doc["_id"] = str(doc["_id"])
-                
-
+            for line in data:
+                line["CreateDate"] = str(line["CreateDate"])
+            
         except Exception as e:
             log.info("select failed")
             log.info(f"type error {e}")

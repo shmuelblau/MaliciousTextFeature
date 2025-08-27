@@ -2,8 +2,46 @@ version: '3.8'
 
 services:
 
+
+  Enricher:
+    image: shmuelblau/enricher:2
+    container_name: enricher
+    restart: always
+    ports:
+      - "8002:8000"
+    depends_on:
+      - kafka
+
+    environment:
+       HOST: "kafka"
+      
+       
+     
+    command: [ "python" , "main.py"]
+    networks:
+      Models:
+
+
+  Preprocessor:
+    image: shmuelblau/preprocessor:2
+    container_name: preprocessor
+    restart: always
+    ports:
+      - "8001:8000"
+    depends_on:
+      - kafka
+
+    environment:
+       HOST: "kafka"
+      
+       
+     
+    command: [ "python" , "main.py"]
+    networks:
+      Models:
+
   Retriever:
-    image: shmuelblau/retriever:1
+    image: shmuelblau/retriever:2
     container_name: Retriever
     restart: always
     ports:
