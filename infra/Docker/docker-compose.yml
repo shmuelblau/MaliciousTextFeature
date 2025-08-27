@@ -2,61 +2,54 @@ version: '3.8'
 
 services:
 
-  Subscriber1:
-    image: shmuelblau/subscriber:1
-    container_name: Subscriber1
+  DataRetrieval:
+    image: shmuelblau/DataRetrieval:1
+    container_name: DataRetrieval
     restart: always
     ports:
       - "8001:8000"
     depends_on:
-      - kafka
       - mongo
 
     environment:
       
-      CONNECTION_STRING: "mongodb://shmuel:1234@mongo:27017/fromkafka?authSource=admin"
-      COLLECTION: interesting 
-      DATABASE: fromkafka
-      KAFKA_HOST: kafka
+      # CONNECTION_STRING: "mongodb://shmuel:1234@mongo:27017/fromkafka?authSource=admin"
+      # COLLECTION1: interesting 
+      # COLLECTION1: interesting
+      # DATABASE: fromkafka
+     
     command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
     networks:
       Models:
 
-  Subscriber2:
-    image: shmuelblau/subscriber:1
-    container_name: Subscriber2
+  Persister:
+    image: shmuelblau/Persister:1
+    container_name: Persister
     restart: always
     ports:
       - "8002:8000"
     depends_on:
       - kafka
-      - mongo
-    
     environment:
-      
-      CONNECTION_STRING: "mongodb://shmuel:1234@mongo:27017/fromkafka?authSource=admin"
-      COLLECTION: not_interesting 
-      DATABASE: fromkafka
+      # COLLECTION: not_interesting 
       KAFKA_HOST: kafka
 
-    command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["python" , "main.py"]
     networks:
       Models:
 
 
-  Publisher:
-    image: shmuelblau/publisher:1
-    container_name: Publisher
+  Enricher:
+    image: shmuelblau/Enricher:1
+    container_name: Enricher
     
     ports:
       - "8000:8000"
     depends_on:
       - kafka
-      - mongo
-
     environment:
-      HOST: kafka
-    command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+      # HOST: kafka
+    command: ["python" , "main.py"]
     networks:
       Models:
 
