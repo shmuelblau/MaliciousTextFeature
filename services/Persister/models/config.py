@@ -5,7 +5,7 @@ connection_string = os.getenv("CONNECTION_STRING" ,"mongodb://shmuel:1234@mongo:
 
 dbname = os.getenv("DB_NAME" ,"TextFeature" )
 
-topic1 = os.getenv("NEW_TOPIC1" ,"enriched_preprocessed_tweets_antisemitic")     
-topic2 = os.getenv("NEW_TOPIC2" ,"enriched_preprocessed_tweets_not_antisemitic")    
+topic1 = os.getenv("TOPIC1" ,"enriched_preprocessed_tweets_antisemitic")     
+topic2 = os.getenv("TOPIC2" ,"enriched_preprocessed_tweets_not_antisemitic")    
 
 

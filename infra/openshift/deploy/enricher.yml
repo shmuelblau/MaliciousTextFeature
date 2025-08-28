@@ -1,0 +1,37 @@
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: a0528075188-dev
+  name: 'enricher'
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: 'enricher'
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: 'enricher'
+    spec:
+      containers:
+        - name: enricher-container
+          image: >-
+            shmuelblau/enricher:2 
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          env: 
+           
+           
+
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false

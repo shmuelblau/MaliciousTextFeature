@@ -1,0 +1,36 @@
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: a0528075188-dev
+  name: 'persister'
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: 'persister'
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: 'persister'
+    spec:
+      containers:
+        - name: persister-container
+          image: >-
+            shmuelblau/persister:2
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          
+           
+
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false

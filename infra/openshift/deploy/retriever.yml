@@ -1,0 +1,42 @@
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: a0528075188-dev
+  name: 'retriever'
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: 'retriever'
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: 'retriever'
+    spec:
+      containers:
+        - name: retriever-container
+          image: >-
+            shmuelblau/retriever:2
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          env: 
+           - name: CONNECTION_STRING
+             value: "mongodb+srv://IRGC_NEW:iran135@cluster0.6ycjkak.mongodb.net/
+           - name: COLLECTION
+             value: "tweets"
+           - name: DATABASE
+             value: "IranMalDB"
+           
+
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false

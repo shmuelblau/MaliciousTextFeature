@@ -1,26 +1,35 @@
 version: '3.8'
 
 services:
+# ------------------------------------------------------------------- 
+
   DataRetrieval:
     image: shmuelblau/dataretrieval:2
     container_name: dataretrieval
     restart: always
     ports:
-      - "8004:8000"
+      - "8000:8000"
+
+    environment:
+       CONNECTION_STRING: "mongodb://shmuel:1234@mongo:27017/TextFeature?authSource=admin"
+       COLLECTION1: "enriched_preprocessed_tweets_antisemitic"
+       COLLECTION2: "enriched_preprocessed_tweets_not_antisemitic"
+       DATABASE: "TextFeature"
+
     depends_on:
       - mongodb
     networks:
       Models:
 
-    
+# ------------------------------------------------------------------- 
 
 
   Persister:
     image: shmuelblau/persister:2
     container_name: persister
     restart: always
-    ports:
-      - "8003:8000"
+    
+
     depends_on:
       - kafka
       - mongodb
@@ -31,50 +40,60 @@ services:
 
     environment:
        HOST: "kafka"
+       CONNECTION_STRING: "mongodb://shmuel:1234@mongo:27017/TextFeature?authSource=admin"
+       TOPIC1: "enriched_preprocessed_tweets_antisemitic"
+       TOPIC2: "enriched_preprocessed_tweets_not_antisemitic"
+       DB_NAME: "TextFeature"
+# ------------------------------------------------------------------- 
 
   Enricher:
     image: shmuelblau/enricher:2
     container_name: enricher
     restart: always
-    ports:
-      - "8002:8000"
+   
     depends_on:
       - kafka
 
     environment:
        HOST: "kafka"
+       TOPIC1: "preprocessed_tweets_antisemitic"
+       TOPIC2: "preprocessed_tweets_not_antisemitic"
+       NEW_TOPIC1: "enriched_preprocessed_tweets_antisemitic"
+       NEW_TOPIC2: "enriched_preprocessed_tweets_not_antisemitic"
       
-       
-     
     command: [ "python" , "main.py"]
     networks:
       Models:
+# ------------------------------------------------------------------- 
 
 
   Preprocessor:
     image: shmuelblau/preprocessor:2
     container_name: preprocessor
     restart: always
-    ports:
-      - "8001:8000"
+    
     depends_on:
       - kafka
 
     environment:
        HOST: "kafka"
+       TOPIC1: "raw_tweets_antisemitic"
+       TOPIC2: "raw_tweets_not_antisemitic"
+       NEW_TOPIC1: "preprocessed_tweets_antisemitic"
+       NEW_TOPIC2: "preprocessed_tweets_not_antisemitic"
       
        
      
     command: [ "python" , "main.py"]
     networks:
       Models:
+# ------------------------------------------------------------------- 
 
   Retriever:
     image: shmuelblau/retriever:2
     container_name: Retriever
     restart: always
-    ports:
-      - "8000:8000"
+   
     depends_on:
       - kafka
 
@@ -88,6 +107,7 @@ services:
       Models:
 
 
+# ------------------------------------------------------------------- 
 
   zookeeper:
     image: 'bitnami/zookeeper:3.8'
@@ -98,6 +118,7 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
       Models:
+# ------------------------------------------------------------------- 
 
   kafka:
     image: 'bitnami/kafka:3.7'
@@ -118,6 +139,8 @@ services:
       Models:
 
 
+# ------------------------------------------------------------------- 
+
 
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -129,6 +152,7 @@ services:
       - kafka
     networks:
       Models:
+# ------------------------------------------------------------------- 
 
   mongodb:
     image: mongo:6.0
@@ -146,6 +170,7 @@ services:
     networks:
       Models:
 
+# ------------------------------------------------------------------- 
 
 volumes:
   mongo-data:
