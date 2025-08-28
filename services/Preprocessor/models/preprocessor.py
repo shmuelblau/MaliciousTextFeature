@@ -1,14 +1,17 @@
 import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
-import string
-import re
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('punkt_tab')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
+
+
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+import string
+import re
+
 
 
 class Preprocessor:
@@ -59,8 +62,3 @@ class Preprocessor:
 
 
 
-data =  "The cats were running faster     than the dogs    ."
-
-
-print(data)
-print(Preprocessor.do_all(data))

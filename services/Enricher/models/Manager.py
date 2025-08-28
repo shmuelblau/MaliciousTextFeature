@@ -2,6 +2,10 @@
 
 from models.kafka_loader import KafkaLoader
 from models.kafka_reader import KafkaReader
+from models.enricher import Enricher
+
+from models.logger import get_logger
+log = get_logger()
 
 class Manager:
 
@@ -23,10 +27,16 @@ class Manager:
         while True:
             for line in self.consumer:
                 
-              
-                # line = Enricher.do_all(line)
                 newtopic = self.newtopic1 if line.topic == self.topic1 else self.newtopic2
                 line = line.value
+                try:
+                    line = Enricher.do_all(line)
+                    log.info("add new data")
+                except Exception as e:
+                    log.info(type(line))
+                    log.error(e)
+                
+
                 self.kafka_producer.insert_one(newtopic,line)
 
         

@@ -1,5 +1,6 @@
 
 
+import json
 from kafka import KafkaConsumer
 
 
@@ -11,7 +12,7 @@ class KafkaReader:
             bootstrap_servers=f'{kafka_host}:9092',
             auto_offset_reset='earliest',
             group_id = "preprosesor",
-            value_deserializer=lambda v: v.decode('utf-8'),
+            value_deserializer=lambda v: json.loads(v.decode('utf-8'))
                        
         )
         
