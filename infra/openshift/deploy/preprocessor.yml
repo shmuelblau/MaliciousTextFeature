@@ -1,0 +1,39 @@
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: a0528075188-dev
+  name: 'preprocessor'
+  annotations: {}
+spec:
+  selector:
+    matchLabels:
+      app: 'preprocessor'
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: 'preprocessor'
+    spec:
+      containers:
+        - name: preprocessor-container
+          image: >-
+            shmuelblau/preprocessor:2
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+          env: 
+           -
+           - name: HOST
+             value: "kafka"
+           
+
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false
