@@ -1,7 +1,16 @@
-docker build -t shmuelblau/retriever:1 .
-docker push shmuelblau/retriever:1  
+docker build -t shmuelblau/retriever:2 ../services/Retriever
+docker push shmuelblau/retriever:2
 
-docker build -t shmuelblau/subscriber:1 services/Subscriber/.
-docker push shmuelblau/subscriber:1  
+docker build -t shmuelblau/preprocessor:2 ../services/Preprocessor
+docker push shmuelblau/preprocessor:2  
 
-docker compose up
+docker build -t shmuelblau/enricher:2 ../services/Enricher
+docker push shmuelblau/enricher:2  
+
+docker build -t shmuelblau/persister:2 ../services/Persister
+docker push shmuelblau/persister:2 
+
+docker build -t shmuelblau/dataretrieval:2 ../services/DataRetrieval
+docker push shmuelblau/dataretrieval:2 
+
+

@@ -1,38 +1,24 @@
-from models.dbloader import DBLoader
-from models.consumer import Consumer
-from datetime import datetime
+from models.db_loader import DbLoader
+
 from models.logger import get_logger
+from models.DAL import DAL
 log = get_logger()
 class Manager:
     
-    def __init__(self , connection_string , db_name ,collection ,kafka_host ) -> None:
+    def __init__(self , connection_string , db_name ,collection1 ,collection2 ) -> None:
 
-        self.db:DBLoader = DBLoader(connection_string ,db_name , collection )
-        self.consumer:Consumer = Consumer(kafka_host , collection)
+        self.db:DAL = DAL(connection_string ,db_name )
+        self.dbloader = {collection1:DbLoader(self.db  , collection1) , collection2: DbLoader(self.db  , collection2)} 
+   
+
+        
     
-    def start(self):
+    def get(self , coll):
 
-        data:list = self.consumer.get_data()
+        result = self.dbloader[coll].Select()
+      
 
-        log.info(f"get a data from kafka type:{type(data)} len:{len(data)} type[0]:{type(data[0])} ")
-
-        data = [Manager.add_time(line) for line in data]
-        log.info(f"add time  len:{len(data)} ")
-        self.db.insert(data)
-
-        return data
+        return result
     
 
-
-
-
-
-
-
-    @staticmethod
-    def add_time(text):
-
-        return {"data":text , "time": str(datetime.now())}
-
-    
 

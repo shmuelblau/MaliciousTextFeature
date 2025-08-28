@@ -2,7 +2,7 @@ import pymongo
 from models.DAL import DAL
 from pymongo.database import Database ,Collection
 from models.logger import get_logger
-import json
+
 log = get_logger()
 
 class DbLoader:
@@ -39,16 +39,17 @@ class DbLoader:
 # ---------------------------------------------------------------------------------------
     def insert(self , data:list[dict]) -> None:
 
-        
+        for d in data:
+            d.pop("_id", None)
         log.info(f"start load data len ={len(data)}")
 
-        for i in data:
-            i = json.dumps(i)
-        
-        self.connection[self.collection_name].insert_many(data)
-        log.info("load finish")
+        try:
+            self.connection[self.collection_name].insert_many(data)
+            log.info("load finish")
 
-       
+        except Exception as e:
+            log.info("insert failed")
+            log.info(f"type error {e}")
         
 
                

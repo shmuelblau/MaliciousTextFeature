@@ -17,7 +17,7 @@ class KafkaLoader:
         try:
             log.info(f"try insert data topic:{topic}  len:{len(data)}")
             for i in data:
-                i = str(i)
+                
                 self.producer.send(topic , i )
 
             self.producer.flush()
@@ -29,8 +29,8 @@ class KafkaLoader:
 
     def insert_one(self ,topic , data:dict):
         try:
-            i = str(data)
-            self.producer.send(topic , i )
+          
+            self.producer.send(topic , data )
 
             self.producer.flush()
             log.info("success insert")

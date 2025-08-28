@@ -10,7 +10,7 @@ class KafkaReader:
             topic1 , topic2,
             bootstrap_servers=f'{kafka_host}:9092',
             auto_offset_reset='earliest',
-            group_id = "preprosesor",
+            group_id = "Persistet",
             value_deserializer=lambda v: json.loads(v.decode('utf-8')),
                        
         )

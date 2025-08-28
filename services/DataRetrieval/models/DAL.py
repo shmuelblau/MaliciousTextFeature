@@ -21,6 +21,3 @@ class DAL:
     def get_conn(self) -> Database:
         
         return self.conn # type: ignore
-    
-    def insert(self , coll , data:dict):
-        self.conn[coll].insert_one(data)

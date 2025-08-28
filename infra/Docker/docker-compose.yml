@@ -1,59 +1,92 @@
 version: '3.8'
 
 services:
-
   DataRetrieval:
-    image: shmuelblau/DataRetrieval:1
-    container_name: DataRetrieval
+    image: shmuelblau/dataretrieval:2
+    container_name: dataretrieval
     restart: always
     ports:
-      - "8001:8000"
+      - "8004:8000"
     depends_on:
-      - mongo
-
-    environment:
-      
-      # CONNECTION_STRING: "mongodb://shmuel:1234@mongo:27017/fromkafka?authSource=admin"
-      # COLLECTION1: interesting 
-      # COLLECTION1: interesting
-      # DATABASE: fromkafka
-     
-    command: ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+      - mongodb
     networks:
       Models:
 
+    
+
+
   Persister:
-    image: shmuelblau/Persister:1
-    container_name: Persister
+    image: shmuelblau/persister:2
+    container_name: persister
+    restart: always
+    ports:
+      - "8003:8000"
+    depends_on:
+      - kafka
+      - mongodb
+
+    networks:
+      Models:
+
+
+    environment:
+       HOST: "kafka"
+
+  Enricher:
+    image: shmuelblau/enricher:2
+    container_name: enricher
     restart: always
     ports:
       - "8002:8000"
     depends_on:
       - kafka
-    environment:
-      # COLLECTION: not_interesting 
-      KAFKA_HOST: kafka
 
-    command: ["python" , "main.py"]
+    environment:
+       HOST: "kafka"
+      
+       
+     
+    command: [ "python" , "main.py"]
     networks:
       Models:
 
 
-  Enricher:
-    image: shmuelblau/Enricher:1
-    container_name: Enricher
-    
+  Preprocessor:
+    image: shmuelblau/preprocessor:2
+    container_name: preprocessor
+    restart: always
+    ports:
+      - "8001:8000"
+    depends_on:
+      - kafka
+
+    environment:
+       HOST: "kafka"
+      
+       
+     
+    command: [ "python" , "main.py"]
+    networks:
+      Models:
+
+  Retriever:
+    image: shmuelblau/retriever:2
+    container_name: Retriever
+    restart: always
     ports:
       - "8000:8000"
     depends_on:
       - kafka
+
     environment:
-      # HOST: kafka
-    command: ["python" , "main.py"]
+       HOST: "kafka"
+      
+       
+     
+    command: [ "python" , "main.py"]
     networks:
       Models:
 
-  
 
 
   zookeeper:
@@ -84,21 +117,6 @@ services:
     networks:
       Models:
 
-  mongo:
-    image: mongo:6.0
-    container_name: mongo
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: shmuel
-      MONGO_INITDB_ROOT_PASSWORD: "1234"
-      MONGO_INITDB_DATABASE: test
-    volumes:
-      - mongo-data:/data/db
-     
-    restart: unless-stopped
-    networks:
-      Models:
 
 
   kafdrop:
@@ -111,6 +129,23 @@ services:
       - kafka
     networks:
       Models:
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: shmuel
+      MONGO_INITDB_ROOT_PASSWORD: "1234"
+      MONGO_INITDB_DATABASE: TextFeature
+    volumes:
+      - mongo-data:/data/db
+     
+    restart: unless-stopped
+    networks:
+      Models:
+
 
 volumes:
   mongo-data:
